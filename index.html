@@ -1,0 +1,590 @@
+
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>اختبار ثقافي وديني</title>
+  <style>
+    body {
+      font-family: 'Tahoma', sans-serif;
+      direction: rtl;
+      padding: 30px;
+      background-color: #f5f5f5;
+    }
+    #question-box {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #2d4b5c;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    #timer {
+      font-size: 18px;
+      font-weight: bold;
+      color: red;
+    }
+    .wrong-review {
+      background: #fff3f3;
+      border-right: 5px solid red;
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+
+<h2>اختبار ثقافي وديني (50 سؤال)</h2>
+<div id="timer">⏳ الوقت المتبقي: 60 ثانية</div>
+<div id="question-box"></div>
+<button onclick="submitAnswer()" id="nextBtn">السؤال التالي</button>
+<p id="result" style="font-size: 20px; font-weight: bold; margin-top: 20px;"></p>
+<div id="review"></div>
+
+<script>
+const questions = [
+  {
+    "question": "ما هي العاصمة الإدارية للمملكة العربية السعودية؟",
+    "options": [
+      "الرياض",
+      "جدة",
+      "مكة"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "في أي عام تأسست المملكة العربية السعودية؟",
+    "options": [
+      "1932",
+      "1925",
+      "1945"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "من هو مؤسس المملكة العربية السعودية؟",
+    "options": [
+      "الملك سعود",
+      "الملك عبدالعزيز",
+      "الملك فيصل"
+    ],
+    "correct": 1
+  },
+  {
+    "question": "ما اسم أطول جبل في السعودية؟",
+    "options": [
+      "جبل السودة",
+      "جبل طويق",
+      "جبل رضوى"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "ما اسم العملة الرسمية للسعودية؟",
+    "options": [
+      "الدرهم",
+      "الدينار",
+      "الريال"
+    ],
+    "correct": 2
+  },
+  {
+    "question": "ما هو البحر الذي تطل عليه جدة؟",
+    "options": [
+      "البحر الأحمر",
+      "الخليج العربي",
+      "بحر العرب"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "ما اسم الهيئة المسؤولة عن الترفيه في السعودية؟",
+    "options": [
+      "هيئة الترفيه",
+      "هيئة الثقافة",
+      "هيئة السياحة"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "ما هو اليوم الوطني السعودي؟",
+    "options": [
+      "23 سبتمبر",
+      "1 ديسمبر",
+      "15 أغسطس"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "كم عدد المناطق الإدارية في السعودية؟",
+    "options": [
+      "13",
+      "10",
+      "15"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "ما هي أكبر مدينة في السعودية من حيث المساحة؟",
+    "options": [
+      "الرياض",
+      "الدمام",
+      "المدينة"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "ما اسم الدوري السعودي لكرة القدم؟",
+    "options": [
+      "دوري الأمير محمد بن سلمان",
+      "دوري الخليج",
+      "الدوري العربي"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "أين يقع جبل النور؟",
+    "options": [
+      "مكة",
+      "المدينة",
+      "الطائف"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "ما اسم القصر الملكي في الرياض؟",
+    "options": [
+      "قصر اليمامة",
+      "قصر العزيزية",
+      "قصر العوجا"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "ما اسم أول جامعة سعودية؟",
+    "options": [
+      "جامعة الملك سعود",
+      "جامعة الملك عبدالعزيز",
+      "جامعة الإمام"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "ماذا تعني كلمة 'العلا'؟",
+    "options": [
+      "الكرم",
+      "العلو والرفعة",
+      "الجبال"
+    ],
+    "correct": 1
+  },
+  {
+    "question": "ما هي أشهر الأكلات الشعبية في نجد؟",
+    "options": [
+      "كبسة",
+      "جريش",
+      "منتو"
+    ],
+    "correct": 1
+  },
+  {
+    "question": "ما هو عدد أركان الإسلام؟",
+    "options": [
+      "5",
+      "6",
+      "4"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "من هو خاتم الأنبياء؟",
+    "options": [
+      "عيسى",
+      "موسى",
+      "محمد"
+    ],
+    "correct": 2
+  },
+  {
+    "question": "ما السورة التي لا تبدأ بالبسملة؟",
+    "options": [
+      "التوبة",
+      "الأنفال",
+      "النور"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "سؤال ديني رقم 4",
+    "options": [
+      "خيار 1",
+      "خيار 2",
+      "خيار 3"
+    ],
+    "correct": 1
+  },
+  {
+    "question": "سؤال ديني رقم 5",
+    "options": [
+      "خيار 1",
+      "خيار 2",
+      "خيار 3"
+    ],
+    "correct": 2
+  },
+  {
+    "question": "سؤال ديني رقم 6",
+    "options": [
+      "خيار 1",
+      "خيار 2",
+      "خيار 3"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "سؤال ديني رقم 7",
+    "options": [
+      "خيار 1",
+      "خيار 2",
+      "خيار 3"
+    ],
+    "correct": 1
+  },
+  {
+    "question": "سؤال ديني رقم 8",
+    "options": [
+      "خيار 1",
+      "خيار 2",
+      "خيار 3"
+    ],
+    "correct": 2
+  },
+  {
+    "question": "سؤال ديني رقم 9",
+    "options": [
+      "خيار 1",
+      "خيار 2",
+      "خيار 3"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "سؤال ديني رقم 10",
+    "options": [
+      "خيار 1",
+      "خيار 2",
+      "خيار 3"
+    ],
+    "correct": 1
+  },
+  {
+    "question": "سؤال ديني رقم 11",
+    "options": [
+      "خيار 1",
+      "خيار 2",
+      "خيار 3"
+    ],
+    "correct": 2
+  },
+  {
+    "question": "سؤال ديني رقم 12",
+    "options": [
+      "خيار 1",
+      "خيار 2",
+      "خيار 3"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "سؤال ديني رقم 13",
+    "options": [
+      "خيار 1",
+      "خيار 2",
+      "خيار 3"
+    ],
+    "correct": 1
+  },
+  {
+    "question": "سؤال ديني رقم 14",
+    "options": [
+      "خيار 1",
+      "خيار 2",
+      "خيار 3"
+    ],
+    "correct": 2
+  },
+  {
+    "question": "سؤال ديني رقم 15",
+    "options": [
+      "خيار 1",
+      "خيار 2",
+      "خيار 3"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "سؤال ديني رقم 16",
+    "options": [
+      "خيار 1",
+      "خيار 2",
+      "خيار 3"
+    ],
+    "correct": 1
+  },
+  {
+    "question": "سؤال ديني رقم 17",
+    "options": [
+      "خيار 1",
+      "خيار 2",
+      "خيار 3"
+    ],
+    "correct": 2
+  },
+  {
+    "question": "سؤال ديني رقم 18",
+    "options": [
+      "خيار 1",
+      "خيار 2",
+      "خيار 3"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "سؤال ديني رقم 19",
+    "options": [
+      "خيار 1",
+      "خيار 2",
+      "خيار 3"
+    ],
+    "correct": 1
+  },
+  {
+    "question": "سؤال ديني رقم 20",
+    "options": [
+      "خيار 1",
+      "خيار 2",
+      "خيار 3"
+    ],
+    "correct": 2
+  },
+  {
+    "question": "سؤال ديني رقم 21",
+    "options": [
+      "خيار 1",
+      "خيار 2",
+      "خيار 3"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "سؤال ديني رقم 22",
+    "options": [
+      "خيار 1",
+      "خيار 2",
+      "خيار 3"
+    ],
+    "correct": 1
+  },
+  {
+    "question": "سؤال ديني رقم 23",
+    "options": [
+      "خيار 1",
+      "خيار 2",
+      "خيار 3"
+    ],
+    "correct": 2
+  },
+  {
+    "question": "سؤال ديني رقم 24",
+    "options": [
+      "خيار 1",
+      "خيار 2",
+      "خيار 3"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "سؤال ديني رقم 25",
+    "options": [
+      "خيار 1",
+      "خيار 2",
+      "خيار 3"
+    ],
+    "correct": 1
+  },
+  {
+    "question": "سؤال ديني رقم 26",
+    "options": [
+      "خيار 1",
+      "خيار 2",
+      "خيار 3"
+    ],
+    "correct": 2
+  },
+  {
+    "question": "سؤال ديني رقم 27",
+    "options": [
+      "خيار 1",
+      "خيار 2",
+      "خيار 3"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "سؤال ديني رقم 28",
+    "options": [
+      "خيار 1",
+      "خيار 2",
+      "خيار 3"
+    ],
+    "correct": 1
+  },
+  {
+    "question": "سؤال ديني رقم 29",
+    "options": [
+      "خيار 1",
+      "خيار 2",
+      "خيار 3"
+    ],
+    "correct": 2
+  },
+  {
+    "question": "سؤال ديني رقم 30",
+    "options": [
+      "خيار 1",
+      "خيار 2",
+      "خيار 3"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "سؤال ديني رقم 31",
+    "options": [
+      "خيار 1",
+      "خيار 2",
+      "خيار 3"
+    ],
+    "correct": 1
+  },
+  {
+    "question": "سؤال ديني رقم 32",
+    "options": [
+      "خيار 1",
+      "خيار 2",
+      "خيار 3"
+    ],
+    "correct": 2
+  },
+  {
+    "question": "سؤال ديني رقم 33",
+    "options": [
+      "خيار 1",
+      "خيار 2",
+      "خيار 3"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "سؤال ديني رقم 34",
+    "options": [
+      "خيار 1",
+      "خيار 2",
+      "خيار 3"
+    ],
+    "correct": 1
+  }
+];
+
+let currentQuestion = 0;
+let score = 0;
+let timer;
+let timeLeft = 60;
+let userAnswers = [];
+
+function loadQuestion() {
+  clearInterval(timer);
+  timeLeft = 60;
+  document.getElementById("timer").innerText = `⏳ الوقت المتبقي: ${timeLeft} ثانية`;
+
+  const q = questions[currentQuestion];
+  let html = `<p>${q.question}</p>`;
+  q.options.forEach((opt, index) => {
+    html += `<label><input type="radio" name="answer" value="${index}"> ${opt}</label><br>`;
+  });
+  document.getElementById("question-box").innerHTML = html;
+
+  timer = setInterval(() => {
+    timeLeft--;
+    document.getElementById("timer").innerText = `⏳ الوقت المتبقي: ${timeLeft} ثانية`;
+    if (timeLeft === 0) {
+      clearInterval(timer);
+      submitAnswer(true);
+    }
+  }, 1000);
+}
+
+function submitAnswer(auto = false) {
+  clearInterval(timer);
+  const selected = document.querySelector('input[name="answer"]:checked');
+  let userAns = selected ? parseInt(selected.value) : null;
+  userAnswers.push(userAns);
+
+  if (userAns === questions[currentQuestion].correct) {
+    score++;
+  }
+
+  currentQuestion++;
+  if (currentQuestion < questions.length) {
+    loadQuestion();
+  } else {
+    showResult();
+  }
+}
+
+function showResult() {
+  document.getElementById("question-box").style.display = "none";
+  document.getElementById("nextBtn").style.display = "none";
+  document.getElementById("timer").style.display = "none";
+
+  let msg = "";
+  if (score === questions.length) msg = "🌟 ممتاز جدًا! كل إجاباتك صحيحة.";
+  else if (score >= 40) msg = `✅ جيد جدًا، درجتك: ${score} من 50`;
+  else if (score >= 30) msg = `🔸 جيد، درجتك: ${score} من 50`;
+  else msg = `❌ ضعيف، درجتك: ${score} من 50 — حاول مرة أخرى.`;
+
+  document.getElementById("result").innerText = msg;
+
+  let reviewHtml = "<h3>📚 مراجعة الأسئلة الخاطئة:</h3>";
+  questions.forEach((q, i) => {
+    if (userAnswers[i] !== q.correct) {
+      const userAnsText = userAnswers[i] !== null ? q.options[userAnswers[i]] : "لم يتم الاختيار";
+      const correctText = q.options[q.correct];
+      reviewHtml += `
+        <div class="wrong-review">
+          <strong>السؤال ${i + 1}:</strong> ${q.question}<br>
+          <span style="color:red;">❌ إجابتك: ${userAnsText}</span><br>
+          <span style="color:green;">✅ الإجابة الصحيحة: ${correctText}</span>
+        </div>
+      `;
+    }
+  });
+
+  if (reviewHtml === "<h3>📚 مراجعة الأسئلة الخاطئة:</h3>") {
+    reviewHtml += "<p>كل إجاباتك صحيحة! ما شاء الله 👏</p>";
+  }
+
+  document.getElementById("review").innerHTML = reviewHtml;
+}
+
+loadQuestion();
+</script>
+</body>
+</html>
